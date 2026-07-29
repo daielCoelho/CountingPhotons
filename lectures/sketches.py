@@ -29,12 +29,13 @@ def _canvas(w=8.0, h=4.0):
     return fig, ax
 
 
-def _beamsplitter(ax, x, y, size=0.5, label="BS"):
-    """A beamsplitter cube with its diagonal, centered on (x, y)."""
+def _beamsplitter(ax, x, y, size=0.5, label="BS", diag="/"):
+    """A beamsplitter cube with its diagonal ("/" or "\\"), centered on (x, y)."""
     s = size / 2
     ax.add_patch(Rectangle((x - s, y - s), size, size, facecolor="#d9e6f2",
                            edgecolor=INK, lw=1.5, zorder=3))
-    ax.plot([x - s, x + s], [y - s, y + s], color=INK, lw=1.5, zorder=4)
+    ys = (y - s, y + s) if diag == "/" else (y + s, y - s)
+    ax.plot([x - s, x + s], ys, color=INK, lw=1.5, zorder=4)
     if label:
         ax.text(x, y - s - 0.18, label, ha="center", va="top",
                 fontsize=10, color=INK)
@@ -272,15 +273,17 @@ def mzi_sketch():
     _beam(ax, 0.2, 0.6, 1.55, 0.6)
     _photon(ax, 0.75, 0.6, color=ACCENT)
     _beamsplitter(ax, 1.8, 0.6, label="BS$_1$")
-    # mirrors at the two corners of the upper arm
-    for xm in (1.8, 5.8):
-        ax.plot([xm - 0.22, xm + 0.22], [2.42, 1.98], color=INK, lw=3.5,
-                solid_capstyle="round", zorder=4)
+    # mirrors: the first turns the beam up -> right ("/"), the
+    # second right -> down ("\\")
+    ax.plot([1.8 - 0.22, 1.8 + 0.22], [1.98, 2.42], color=INK, lw=3.5,
+            solid_capstyle="round", zorder=4)
+    ax.plot([5.8 - 0.22, 5.8 + 0.22], [2.42, 1.98], color=INK, lw=3.5,
+            solid_capstyle="round", zorder=4)
     _beam(ax, 2.05, 0.6, 5.55, 0.6, color=ACCENT)        # lower arm
     _beam(ax, 1.8, 0.85, 1.8, 2.2, color=HOT)            # up
     _beam(ax, 1.8, 2.2, 5.8, 2.2, color=HOT)             # upper arm
     _beam(ax, 5.8, 2.2, 5.8, 0.85, color=HOT)            # down
-    _beamsplitter(ax, 5.8, 0.6, label="BS$_2$")
+    _beamsplitter(ax, 5.8, 0.6, label="BS$_2$", diag="\\")
     _beam(ax, 6.05, 0.6, 7.3, 0.6, color=INK)
     _detector(ax, 7.6, 0.6, angle=180, label="top")
     _beam(ax, 5.8, 0.35, 5.8, -0.55, color=INK)
@@ -498,14 +501,16 @@ def noon_mzi():
     _photon(ax, 1.75, 0.15, color=HOT)
     _beamsplitter(ax, 1.75, 0.85, label="")
     ax.text(1.15, 0.52, "BS$_1$", fontsize=10, color=INK)
-    for xm in (1.75, 5.9):
-        ax.plot([xm - 0.22, xm + 0.22], [2.62, 2.18], color=INK, lw=3.5,
-                solid_capstyle="round", zorder=4)
+    # first mirror: up -> right ("/"); second: right -> down ("\\")
+    ax.plot([1.75 - 0.22, 1.75 + 0.22], [2.18, 2.62], color=INK, lw=3.5,
+            solid_capstyle="round", zorder=4)
+    ax.plot([5.9 - 0.22, 5.9 + 0.22], [2.62, 2.18], color=INK, lw=3.5,
+            solid_capstyle="round", zorder=4)
     _beam(ax, 1.75, 1.1, 1.75, 2.4, color="#7b3fb3")
     _beam(ax, 1.75, 2.4, 5.9, 2.4, color="#7b3fb3")
     _beam(ax, 5.9, 2.4, 5.9, 1.1, color="#7b3fb3")
     _beam(ax, 2.0, 0.85, 5.65, 0.85, color="#7b3fb3")
-    _beamsplitter(ax, 5.9, 0.85, label="BS$_2$")
+    _beamsplitter(ax, 5.9, 0.85, label="BS$_2$", diag="\\")
     _beam(ax, 6.15, 0.85, 7.2, 0.85, color=INK)
     _detector(ax, 7.5, 0.85, angle=180, label="")
     _beam(ax, 5.9, 0.6, 5.9, -0.3, color=INK)
